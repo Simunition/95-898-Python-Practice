@@ -60,8 +60,16 @@ def analyze_text(argv):
             f"\n\tTotal number of words: {num_words}")
 
     # Create final dictionary combining relevant information
+    analysis = {}
+    for word, value in words.items():
+        values = [value, 0, 0] # Appearance in words, beginning, then end
+        if word in beginning:
+            values[1] = beginning[word]
+        if word in end:
+            values[2] = end[word]
+        analysis[word] = values
 
-    return words # Needs to return multiple dictionaries...
+    return analysis
 
 
 result = analyze_text(sys.argv)
@@ -71,7 +79,9 @@ user_input = input("Enter a word or type quit: ")
 while user_input.lower() != "quit":
     try:
         print(f"Statistics for the word {user_input}" +
-                f"\n\tcount: {result[user_input]}")
+                f"\n\tTotal Appearance count: {result[user_input][0]}" +
+                f"\n\tCount at Beginning of Sentence: {result[user_input][1]}" +
+                f"\n\tCount at End of Sentence: {result[user_input][2]}")
     except KeyError:
         print("Error: Word not in file")
     user_input = input("Enter a word or type quit: ")
