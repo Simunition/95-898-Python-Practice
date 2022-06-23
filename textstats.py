@@ -45,11 +45,13 @@ def analyze_text(argv):
                     if word[-1] == item:
                         word = word.strip(item)
                         end = add_word(word, end)
-
+                        new_sentence = True
+                        # break for efficiency
+                        break
                     # if it's in the middle it's a space missing after a period
                     # don't need to touch new_sentence because that's
                     # dealt with inside this loop
-                    elif item in word:
+                    if item in word:
                         piece = word.split(item)
                         words = add_word(piece[0], words)
                         words = add_word(piece[1], words)
