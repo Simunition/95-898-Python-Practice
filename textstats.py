@@ -12,7 +12,7 @@ def analyze_text(argv):
     if not then a new key/value pair is added with an initial value of 1.
     Simultaneously total number of lines and words are tracked and reported
     The function returns a combined dictionary with a count for each word of
-    total appearances, and appearances at the beginning and end of a sentence"""
+    total appearances, and appearances at the beginning and end of sentences"""
     # dictionary containing {word: count} to track all words
     words = {}
     # dictionary containing {word: count} to track words beginning a sentence
