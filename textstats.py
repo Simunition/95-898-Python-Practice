@@ -10,7 +10,9 @@ def analyze_text(argv):
     and iterates through each line, then each word. If the word exists as a key
     already in the dictionary, one is added to the count of its appearance,
     if not then a new key/value pair is added with an initial value of 1.
-    Simultaneously total number of lines and words are tracked and reported"""
+    Simultaneously total number of lines and words are tracked and reported
+    The function returns a combined dictionary with a count for each word of
+    total appearances, and appearances at the beginning and end of a sentence"""
     # dictionary containing {word: count} to track all words
     words = {}
     # dictionary containing {word: count} to track words beginning a sentence
@@ -22,12 +24,12 @@ def analyze_text(argv):
     new_sentence = True
     num_lines = 0
     num_words = 0
-    punctuation = ['?', '!', '.']
+    punctuation = [".", "?", "!"]
 
     with open(argv[1], mode='r', encoding='utf-8') as file:
         for line in file:
             # iterate line count
-            num_lines +=1
+            num_lines += 1
             for word in line.split():
                 # iterate word count
                 num_words += 1
@@ -46,21 +48,22 @@ def analyze_text(argv):
 
                     # if it's in the middle it's a space missing after a period
                     # don't need to touch new_sentence because that's
-                    # dealth with inside this loop
+                    # dealt with inside this loop
                     elif item in word:
                         piece = word.split(item)
                         words = add_word(piece[0], words)
                         words = add_word(piece[1], words)
                         end = add_word(piece[0], end)
                         beginning = add_word(piece[1], beginning)
-                        # continue so these words don't get added to the primary tracker twice
+                        # continue so these words don't get added twice
                         continue
 
                 # add all words to primary tracker
                 words = add_word(word, words)
 
-    print(f"Text document {argv[1]} analyzed. \n\tTotal number of lines: {num_lines}" +
-            f"\n\tTotal number of words: {num_words}")
+    print(f"Text document {argv[1]} analyzed. \n\t" +
+          f"Total number of lines: {num_lines}" +
+          f"\n\tTotal number of words: {num_words}")
 
     # Create final dictionary combining relevant information
     analysis = combine_dicts(words, beginning, end)
@@ -71,7 +74,7 @@ def clean_word(word):
     """function for cleaning up a word by making it lowercase,
     and removing useless characters and empty space"""
     to_strip = [",", ")", "(", '"', "'", "@", "#", "$", "%",
-            "^", "&", "*", "<", ">", ":", ";"]
+                "^", "&", "*", "<", ">", ":", ";"]
     word = word.lower()
     for item in to_strip:
         word = word.replace(item, '')
@@ -84,7 +87,8 @@ def combine_dicts(words, beginning, end):
     into a single one with word: [total count, beginning count, end count]"""
     analysis = {}
     for word, value in words.items():
-        values = [value, 0, 0] # Appearance in words, beginning, then end
+        # Appearance in words, beginning, then end
+        values = [value, 0, 0]
         if word in beginning:
             values[1] = beginning[word]
         if word in end:
@@ -109,9 +113,9 @@ user_input = input("Enter a word or type quit: ")
 while user_input.lower() != "quit":
     try:
         print(f"Statistics for the word {user_input}" +
-                f"\n\tTotal Appearance count: {result[user_input][0]}" +
-                f"\n\tCount at Beginning of Sentence: {result[user_input][1]}" +
-                f"\n\tCount at End of Sentence: {result[user_input][2]}\n")
+              f"\n\tTotal Appearance count: {result[user_input][0]}" +
+              f"\n\tCount at Beginning of Sentence: {result[user_input][1]}" +
+              f"\n\tCount at End of Sentence: {result[user_input][2]}\n")
     except KeyError:
         print("Error: Word not in file")
     user_input = input("Enter a word or type quit: ")
