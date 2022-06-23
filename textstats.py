@@ -48,6 +48,7 @@ def analyze_text(argv):
                         new_sentence = True
                         # break for efficiency
                         break
+
                     # if it's in the middle it's a space missing after a period
                     # don't need to touch new_sentence because that's
                     # dealt with inside this loop
