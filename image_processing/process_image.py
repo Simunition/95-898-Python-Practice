@@ -3,6 +3,7 @@ convert the file type as specified by the user"""
 
 import argparse
 import os
+from PIL import Image
 
 parser = argparse.ArgumentParser(description = 'Given a single image or directory'
                                  +' convert image filetype(s)')
@@ -13,14 +14,14 @@ parser.add_argument("name", metavar="<filename>|<dir>", type=str,
 parser.add_argument("format", metavar="<format>", type=str,
                     help = "New file format to change the file(s) to",
                     choices = ["jpg", "jpeg", "png", "bmp", "tiff"])
+parser.add_argument("output_dir", metavar="<output_dir>", type=str, nargs="?",
+                    help = "Set output directory", default=(os.getcwd()))
 
 # options
-parser.add_argument("-o", "--output", help = "Set output directory", default=(os.getcwd()))
 parser.add_argument("-b", "--blur", help = "Blur image", action="store_true")
 parser.add_argument("-c", "--color", help = "Color manipulation", action="store_true")
 
 args = parser.parse_args()
-print(os.path.join(os.getcwd, args.name))
 
 # check if file(s) are actually image files, error if not
 def filetype_check(check_file):
@@ -29,19 +30,33 @@ def filetype_check(check_file):
     name, extension = os.path.splitext(check_file)
     return extension in accepted_types
 
+def convert_image(in_file, format): #improve to handle custom out locations
+    """function to convert image to specified format"""
+    name, extension = os.path.splitext(in_file)
+    out_file = name + "." + format
+    if in_file != out_file:
+        try:
+            with Image.open(in_file) as image:
+                image.save(out_file)
+                print(f"{in_file} converted to {out_file}")
+        except OSError:
+            print(f"cannot convert {in_file}")
+    else:
+        print(f"{in_file} already a {format}")
+
 # determine if args.filname|dir is file or dir
-if os.path.isfile(os.path.join(os.getcwd(), args.name)):
-    # item is file
-    print("file")
+if os.path.isfile(args.name):
+    convert_image(args.name, args.format)
 elif os.path.isdir(args.name):
-    print("dir")
-    for file in os.listdir(args.name):
-        f = os.path.join(args.name, file)
-        if os.path.isfile(f):
-            print(filetype_check(f))
+    # Find some way to check if dir has any image files
+    if any(filetype_check(file) for file in os.listdir(args.name)):
+        for file in os.listdir(args.name):
+            f = os.path.join(args.name, file)
+            if os.path.isfile(f) and filetype_check(f):
+                convert_image(f, args.format)
+    else:
+        print("No image files in specific directory")
 else:
     print("File or directory supplied does not exist")
 
 # if directory doesn't contain any image files print error
-# in directory with images, convert images, ignore rest
-# if submitted image is already in specified format, inform user
