@@ -27,13 +27,13 @@ args = parser.parse_args()
 def filetype_check(check_file):
     """function to check if file matches acceptable filetypes"""
     accepted_types = [".jpg", ".jpeg", ".png", ".bmp", ".tiff"]
-    name, extension = os.path.splitext(check_file)
+    extension = os.path.splitext(check_file)[1]
     return extension in accepted_types
 
-def convert_image(in_file, format): #improve to handle custom out locations
+def convert_image(in_file, desired_format): #improve to handle custom out locations
     """function to convert image to specified format"""
-    name, extension = os.path.splitext(in_file)
-    out_file = name + "." + format
+    name = os.path.splitext(in_file)[0]
+    out_file = name + "." + desired_format
     if in_file != out_file:
         try:
             with Image.open(in_file) as image:
@@ -58,5 +58,3 @@ elif os.path.isdir(args.name):
         print("No image files in specific directory")
 else:
     print("File or directory supplied does not exist")
-
-# if directory doesn't contain any image files print error
